@@ -14,14 +14,15 @@ const LocalStrategy = require("passport-local").Strategy;
 
 require("dotenv").config();
 
-const indexRouter = require("./routes/index.js");
 const usersRouter = require("./routes/users.js");
-
+const appRouter = require("./routes/app-router.js");
 const app = express();
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
+app.use(expressLayouts);
+app.set("layout", "layout");
 
 app.use(logger("dev"));
 app.use(express.json());
@@ -80,8 +81,13 @@ passport.deserializeUser(async (id, done) => {
   }
 });
 
-app.use("/", indexRouter);
-app.use("/users", usersRouter);
+app.use((req, res, next) => {
+  res.locals.user = req.user || null;
+  next();
+});
+
+app.use("/", appRouter);
+app.use("/", usersRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
