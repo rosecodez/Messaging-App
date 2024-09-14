@@ -29,10 +29,10 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  padding: 0;
+  background-color: white;
+  color: black;
+  font-family: ;
 }
 
 h1 {
@@ -70,4 +70,12 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+}
+li {
+  list-style-type: none;
+}
+#headerp {
+  background: linear-gradient(81.84deg, #0099ff -9.4%, #a033ff 51.57%, #ff5280 84.07%, #ff7061 90.59%);
+  -webkit-background-clip: text;
+  color: transparent;
 }
