@@ -43,7 +43,7 @@ export default function LoginForm() {
 
             <div id="login-container" className='text-[14px] pt-5 flex items-center justify-center gap-2'>
                 <h6>Don't have an account?</h6>
-                <a href='/sign-up' className='text-slate-400'>
+                <a href='/signup' className='text-slate-400'>
                     <p>Sign up</p>
                 </a>
             </div>
