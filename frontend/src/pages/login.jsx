@@ -8,7 +8,7 @@ export default function Login() {
             <a href="/">
                 <img src={logo} alt={"logo"} className="w-[80px]"></img>
             </a>
-            <p className="text-[30px] pt-10">Connect with your favorite people.</p>
+            <p className="text-[34px] pt-10">Connect with your favorite people.</p>
             <LoginForm/>
         </div>
     )

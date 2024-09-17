@@ -41,24 +41,32 @@ export default function LoginForm() {
     return (
         <div className="flex flex-col">
 
-            <div id="login-container" className='pt-5'>
+            <div id="login-container" className='text-[14px] pt-5 flex items-center justify-center gap-2'>
                 <h6>Don't have an account?</h6>
-                <a href='/sign-up'>
-                    <button className='mt-3 bg-blue-500 hover:bg-indigo-600 text-white font-bold mb-2 py-2 px-4 rounded focus:outline-none focus:shadow-outline'>Sign up</button>
+                <a href='/sign-up' className='text-slate-400'>
+                    <p>Sign up</p>
                 </a>
             </div>
 
-            <form id="login-form" className='flex flex-col bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4' onSubmit={handleSubmit(onSubmit)}>
+            <form id="login-form" className='flex flex-col bg-white rounded px-8 pt-6 pb-8 mb-4' onSubmit={handleSubmit(onSubmit)}>
 
-                <input className='shadow appearance-none border rounded w-full py-2 px-3 mb-6 text-gray-700 leading-tight focus:outline-none focus:shadow-outline' type="text" {...register("username", { required: true })} placeholder="Username" />
+                <input className='mt-1 block w-full px-3 py-2 mb-2 bg-white border border-slate-300 rounded-md shadow-sm placeholder-slate-400
+                    focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500
+                    disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none
+                    invalid:border-pink-500 invalid:text-pink-600
+                    focus:invalid:border-pink-500 focus:invalid:ring-pink-500 w-[270px]' type="text" {...register("username", { required: true })} placeholder="Username" />
                 {errors.username && <span style={{ color: "red" }}>Username is required</span>}
 
-                <input className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline' type="password" {...register("password", { required: true })} placeholder="Password" />
+                <input className='mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm placeholder-slate-400
+                    focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500
+                    disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none
+                    invalid:border-pink-500 invalid:text-pink-600
+                    focus:invalid:border-pink-500 focus:invalid:ring-pink-500 w-[270px]' type="password" {...register("password", { required: true })} placeholder="Password" />
                 {errors.password && <span style={{ color: "red" }}>Password is required</span>}
 
                 {loginError && <span className='pt-4' style={{ color: "red"}}>{loginError}</span>}
 
-                <button className='mt-6 bg-blue-500 hover:bg-indigo-600 text-white font-bold mb-2 py-2 px-4 rounded focus:outline-none focus:shadow-outline' type="submit">Log in</button>
+                <button className='mt-6 bg-blue-500 hover:bg-indigo-600 text-white font-bold mb-2 py-2 px-4 rounded focus:outline-none focus:shadow-outline self-center w-[84px]' type="submit">Log in</button>
             </form>
         </div>
     );
