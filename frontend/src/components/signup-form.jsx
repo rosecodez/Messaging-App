@@ -16,18 +16,19 @@ export default function SignupForm() {
                 },
                 body: JSON.stringify(credentials),
             });
-
+    
+            const data = await response.json();
+    
             if (!response.ok) {
-                const errorData = await response.json();
-                setSignupError(`Signup failed: ${errorData.message}`);
+                setSignupError(data.message);
                 return;
             }
-            const data = await response.json();
+    
             console.log("Signup successful:", data);
-            localStorage.setItem('token', data.token);
             navigate("/profile");
         } catch (error) {
-            console.error("Error signing up:", error.message);
+            console.error("Signup error:", error);
+            setSignupError("An unexpected error occurred.");
         }
     };
 

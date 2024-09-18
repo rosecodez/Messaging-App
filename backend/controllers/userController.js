@@ -25,9 +25,17 @@ exports.user_signup_post = [
         user: req.body,
       });
     }
-    const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
     try {
+      const existingUser = await prisma.user.findUnique({
+        where: { username: req.body.username },
+      });
+
+      if (existingUser) {
+        return res.status(400).json({ message: "Username already taken" });
+      }
+
+      const hashedPassword = await bcrypt.hash(req.body.password, 10);
       const user = await prisma.user.create({
         data: {
           username: req.body.username,
@@ -59,24 +67,30 @@ exports.user_login_get = asyncHandler(async (req, res, next) => {
 });
 
 exports.user_login_post = [
-  passport.authenticate("local", {
-    failureRedirect: "/log-in",
-    failureFlash: false,
-  }),
   asyncHandler(async (req, res, next) => {
+    const { username, password } = req.body;
     try {
-      const user = req.user;
-
-      if (user) {
-        req.session.userId = user.id;
-        req.session.user = { id: user.id, username: user.username };
-
-        console.log("Logged in user:", req.session.user);
-
-        res.redirect("/drive");
-      } else {
-        res.status(401).send("Invalid credentials");
+      const user = await prisma.user.findUnique({
+        where: { username: username },
+      });
+      if (!user) {
+        return res
+          .status(401)
+          .json({ message: "Invalid username or password" });
       }
+
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+
+      if (!isPasswordValid) {
+        return res
+          .status(401)
+          .json({ message: "Invalid username or password" });
+      }
+
+      req.session.user = { id: user.id, username: user.username };
+      return res
+        .status(200)
+        .json({ message: "Login successful", user: req.session.user });
     } catch (error) {
       next(error);
     }
@@ -90,23 +104,32 @@ exports.user_logout_get = asyncHandler(async (req, res, next) => {
     }
     req.session.destroy((err) => {
       if (err) {
-        return next(err);
+        return res.status(500).json({ message: "Failed to log out" });
       }
-      res.redirect("/log-in");
+      res.clearCookie("connect.sid");
+      res.status(200).json({ message: "Logged out successfully" });
     });
   });
 });
 
 exports.user_profile_get = asyncHandler(async (req, res, next) => {
   try {
-    const user = await prisma.user.findUnique({ where: { id: req.user.id } });
+    if (!req.session.user) {
+      return res.status(401).json({ message: "Unauthorized, please log in." });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: req.session.user.id },
+    });
+
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
+
     res.json({
       message: "Profile data fetched successfully",
       user: {
-        id: user._id,
+        id: user.id,
         username: user.username,
       },
     });

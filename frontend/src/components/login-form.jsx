@@ -16,14 +16,17 @@ export default function LoginForm() {
                 },
                 body: JSON.stringify(credentials),
                 credentials: 'include',
-            });a
+            });
     
+            const data = await response.json();
+            console.log("Login response data:", data);
+
             if (!response.ok) {
                 const errorData = await response.json();
                 setLoginError(`Login failed: ${errorData.message}`);
+                return
             }
-            const data = await response.json();
-            console.log("Login response data:", data);
+            
             navigate("/profile");
         } catch (error) {
             console.error("Error logging in:", error.message);

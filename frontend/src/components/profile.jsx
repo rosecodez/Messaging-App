@@ -8,13 +8,10 @@ export default function Profile() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch(`http://localhost:3000/users/profile`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      mode: "cors",
-      credentials: "include",
+    fetch(`http://localhost:3000/users/profile`,  {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
     })
       .then(response => {
         if (!response.ok) {
