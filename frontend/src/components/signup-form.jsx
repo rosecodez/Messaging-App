@@ -9,7 +9,7 @@ export default function SignupForm() {
 
     const signupUser = async (credentials) => {
         try {
-            const response = await fetch("http://localhost:3000/users/signup", {
+            const response = await fetch("http://localhost:3000/users/sign-up", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

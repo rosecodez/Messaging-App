@@ -9,14 +9,14 @@ export default function LoginForm() {
 
     const loginUser = async (credentials) => {
         try {
-            const response = await fetch("http://localhost:3000/users/login", {
+            const response = await fetch("http://localhost:3000/users/log-in", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify(credentials),
                 credentials: 'include',
-            });
+            });a
     
             if (!response.ok) {
                 const errorData = await response.json();
@@ -24,8 +24,6 @@ export default function LoginForm() {
             }
             const data = await response.json();
             console.log("Login response data:", data);
-            localStorage.setItem("token", data.token);
-            localStorage.setItem("userId", data.user.id);
             navigate("/profile");
         } catch (error) {
             console.error("Error logging in:", error.message);
