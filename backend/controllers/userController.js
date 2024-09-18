@@ -98,16 +98,18 @@ exports.user_logout_get = asyncHandler(async (req, res, next) => {
 });
 
 exports.user_profile_get = asyncHandler(async (req, res, next) => {
-  if (!req.user) {
-    return res.redirect("/log-in");
-  }
-
   try {
     const user = await prisma.user.findUnique({ where: { id: req.user.id } });
     if (!user) {
-      return res.redirect("/log-in");
+      return res.status(404).json({ message: "User not found" });
     }
-    res.render("profile", { user });
+    res.json({
+      message: "Profile data fetched successfully",
+      user: {
+        id: user._id,
+        username: user.username,
+      },
+    });
   } catch (err) {
     return next(err);
   }
