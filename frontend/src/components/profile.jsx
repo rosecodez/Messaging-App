@@ -57,7 +57,7 @@ export default function Profile() {
     <div>
       <h2 className="pt-5 text-2xl bold font-mono">Welcome, {username}!</h2>
       <div id="profile-links" className="flex flex-row gap-2">
-      <button onClick={handleLogout} className="logout-button">
+      <button onClick={handleLogout} className="mt-6 bg-blue-500 hover:bg-indigo-600 text-white font-bold mb-2 py-2 px-4 rounded focus:outline-none focus:shadow-outline">
         Log out
       </button>
       </div>
