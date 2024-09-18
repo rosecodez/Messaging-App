@@ -1,10 +1,8 @@
 import React from "react";
-import Header from "../components/header";
 
 export default function Home () {
     return(
         <div>
-            <Header />
             <div className="flex items-center">
                 <div id="home-left-panel" className="align-left pr-[150px]">
                     <p id="headerp" className="text-[70px] font-bold leading-[75px] pb-[50px]">Hang out anytime, anywhere</p>

@@ -4,11 +4,13 @@ import Home from './pages/home'
 import Login from "./pages/login"
 import Signup from './pages/signup';
 import Profile from './components/profile';
+import Header from './components/header';
 import './App.css'
 
 function App() {
     return (
         <Router>
+            <Header />
             <Routes>
                 <Route path="/" element={<Home/>}/>
                 <Route path='/login' element={<Login/>}/>
