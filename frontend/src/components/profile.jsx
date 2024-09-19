@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-
+import Header from "../components/header"
 export default function Profile() {
   const [username, setUsername] = useState('');
   const [error, setError] = useState(null);

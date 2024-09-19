@@ -3,10 +3,9 @@ import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 
 export default function LoginForm() {
-    const navigate = useNavigate();
     const { register, handleSubmit, formState: { errors } } = useForm();
     const [loginError, setLoginError] = useState('');
-
+    const navigateTo = useNavigate();
     const loginUser = async (credentials) => {
         try {
             const response = await fetch("http://localhost:3000/users/log-in", {
@@ -27,7 +26,8 @@ export default function LoginForm() {
                 return
             }
             
-            navigate("/profile");
+            navigateTo("/profile");
+            
         } catch (error) {
             console.error("Error logging in:", error.message);
         }
