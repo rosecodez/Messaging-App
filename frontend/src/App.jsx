@@ -1,21 +1,21 @@
 import React, { useEffect, useState } from 'react'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Home from './pages/home'
-import Login from "./pages/login"
-import Signup from './pages/signup';
-import Profile from './components/profile';
-import Header from './components/header';
+import Home from './pages/homePage'
+import Login from "./pages/loginPage"
+import Signup from './pages/signupPage';
+import ProfilePage from './pages/profilePage';
+
 import './App.css'
 
 function App() {
     return (
         <Router>
-            <Header />
             <Routes>
                 <Route path="/" element={<Home/>}/>
                 <Route path='/login' element={<Login/>}/>
                 <Route path='/signup' element={<Signup/>}/>
-                <Route path='/profile' element={<Profile/>}/>
+                <Route path='/logout' element={<Home/>}/>
+                <Route path='/profile' element={<ProfilePage/>}/>
             </Routes>
         </Router>
     )

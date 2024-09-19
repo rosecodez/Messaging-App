@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Header from "../components/header"
+
 export default function Profile() {
   const [username, setUsername] = useState('');
   const [error, setError] = useState(null);
@@ -32,35 +32,13 @@ export default function Profile() {
       });
   }, [navigate]);
 
-  const handleLogout = async () => {
-    try {
-      const response = await fetch("http://localhost:3000/users/log-out", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: 'include',
-      });
-      if (!response.ok) {
-        throw new Error("Logout request failed");
-      }
-      navigate("/login"); 
-    } catch (error) {
-      console.error("Error logging out:", error.message);
-    }
-  };
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
 
   return (
     <div>
-      <h2 className="pt-5 text-2xl bold font-mono">Welcome, {username}!</h2>
-      <div id="profile-links" className="flex flex-row gap-2">
-      <button onClick={handleLogout} className="mt-6 bg-blue-500 hover:bg-indigo-600 text-white font-bold mb-2 py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-        Log out
-      </button>
-      </div>
+      <h2 className="pt-5 text-2xl bold">Welcome, {username}!</h2>
     </div>
   );
 }
