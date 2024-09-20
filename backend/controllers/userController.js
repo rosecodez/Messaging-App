@@ -132,6 +132,7 @@ exports.user_profile_get = asyncHandler(async (req, res, next) => {
       user: {
         id: user.id,
         username: user.username,
+        profile: user.profile,
       },
     });
   } catch (err) {

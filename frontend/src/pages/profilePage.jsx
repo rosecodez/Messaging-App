@@ -15,7 +15,7 @@ export default function ProfilePage() {
           if (!response.ok) {
             throw new Error("Logout request failed");
           }
-          navigate("/login"); 
+          navigate("/login");
         } catch (error) {
           console.error("Error logging out:", error.message);
         }

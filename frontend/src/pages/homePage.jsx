@@ -14,7 +14,7 @@ export default function Home () {
           });
           const data = await response.json();
           console.log("Auth Data:", data);
-  
+          
           if (data.isAuthenticated) {
             setIsAuthenticated(true);
             setUser(data.user);
