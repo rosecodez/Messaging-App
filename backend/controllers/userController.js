@@ -139,3 +139,8 @@ exports.user_profile_get = asyncHandler(async (req, res, next) => {
     return next(err);
   }
 });
+
+exports.user_update_profile_picture = asyncHandler(async (req, res, next) => {
+  console.log(req.file);
+  res.status(200).json({ message: "File uploaded successfully!" });
+});
