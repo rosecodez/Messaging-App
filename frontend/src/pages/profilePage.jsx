@@ -1,8 +1,8 @@
-import Header from "../components/header";
 import React, { useState, useEffect } from "react";
 import Profile from "../components/profile";
 
 export default function ProfilePage() {
+  
     const handleLogout = async () => {
         try {
           const response = await fetch("http://localhost:3000/users/log-out", {
@@ -24,12 +24,14 @@ export default function ProfilePage() {
         <div>
             <header className="flex flex-row items-center justify-between pb-[70px]">
                 <div id="header-left-panel" className="flex ">
-                    
+                  <a href="/profile" className="text-black no-underline hover:underline decoration-2 decoration-sky-500 underline-offset-8">
+                    Profile
+                  </a>
                 </div>
 
                 <div id="header-left-panel" className="flex gap-6 font-medium">
                     <a href="/logout" onClick={handleLogout} className="text-black no-underline hover:underline decoration-2 decoration-sky-500 underline-offset-8">
-                        Log out
+                      Log out
                     </a>
                 </div>
             </header>

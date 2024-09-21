@@ -23,4 +23,5 @@ router.post(
   upload.single("file"),
   userController.user_update_profile_picture
 );
+
 module.exports = router;

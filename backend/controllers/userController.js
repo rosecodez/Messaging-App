@@ -141,6 +141,10 @@ exports.user_profile_get = asyncHandler(async (req, res, next) => {
 });
 
 exports.user_update_profile_picture = asyncHandler(async (req, res, next) => {
-  console.log(req.file);
-  res.status(200).json({ message: "File uploaded successfully!" });
+  try {
+    return res.status(200).json({ message: "Image uploaded successfully!" });
+  } catch (error) {
+    console.error("Error updating profile picture:", error);
+    return res.status(500).json({ error: "Failed to upload image" });
+  }
 });

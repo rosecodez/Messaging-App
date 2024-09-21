@@ -6,6 +6,7 @@ export default function LoginForm() {
     const { register, handleSubmit, formState: { errors } } = useForm();
     const [loginError, setLoginError] = useState('');
     const navigateTo = useNavigate();
+    
     const loginUser = async (credentials) => {
         try {
             const response = await fetch("http://localhost:3000/users/log-in", {
@@ -69,6 +70,7 @@ export default function LoginForm() {
 
                 <button className='mt-6 bg-blue-500 hover:bg-indigo-600 text-white font-bold mb-2 py-2 px-4 rounded focus:outline-none focus:shadow-outline self-center w-[84px]' type="submit">Log in</button>
             </form>
+
         </div>
     );
 }

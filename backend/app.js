@@ -12,6 +12,7 @@ const expressLayouts = require("express-ejs-layouts");
 const LocalStrategy = require("passport-local").Strategy;
 const bodyParser = require("body-parser");
 const cors = require("cors");
+
 require("dotenv").config({ path: "./backend/.env" });
 
 const usersRouter = require("./routes/users.js");
