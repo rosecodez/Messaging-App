@@ -6,21 +6,11 @@ export default function Profile() {
   const { register, handleSubmit } = useForm();
   const [username, setUsername] = useState('');
   const [image, setImage] = useState('');
-  let [count, setCount] = useState(0);
+  const [modalVisibility, setModalVisibility] = useState(false);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   
-  function switchFormDisplay () {
-    setCount((oldCount) => oldCount + 1);
-    if(count % 2) {
-      hideModal()
-    } else {
-      showModal()
-    }
-
-  }
-
   useEffect(() => {
     fetch(`http://localhost:3000/users/profile`,  {
       method: 'GET',
@@ -48,20 +38,12 @@ export default function Profile() {
         setLoading(false);
       });
   }, [navigate]);
-  
-  function showModal() {
-    const profileModal = document.getElementById('profileModal');
-    profileModal.classList.remove('hidden');
-  }
 
-  function hideModal() {
-    const profileModal = document.getElementById('profileModal');
-    profileModal.classList.add('hidden');
-    setCount((oldCount) => oldCount + 1);
-  }
-  
+  const showModal = () => setModalVisibility(true);
+  const hideModal = () => setModalVisibility(false);
+
   const onSubmit = async (data) => {3
-    let profilePicture = document.getElementById("profilePicture");
+    const profilePicture = document.getElementById("profilePicture");
     const file = profilePicture.files[0]; 
     console.log(file)
 
@@ -83,6 +65,7 @@ export default function Profile() {
       const uploadData = await response.json();
       console.log("Upload successful:", uploadData);
       hideModal();
+      window.location.reload();
     } catch (error) {
       console.error("Error uploading image:", error);
     }
@@ -99,20 +82,22 @@ export default function Profile() {
       
       <div>
         <img src={image} className="pb-3 w-[40px]"></img>
-        <button id="updateProfileButton" onClick={switchFormDisplay}>Update profile picture</button>
+        <button id="updateProfileButton" onClick={showModal} className='mt-6 bg-blue-500 hover:bg-indigo-600 text-white font-bold mb-2 py-2 px-4 rounded focus:outline-none focus:shadow-outline self-center'>Update profile picture</button>
 
-        <div id="profileModal" className="hidden pt-6">
-          <form id="UpdateProfilePicture" onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2" method="POST" encType="multipart/form-data" action="">
-            <div className="flex flex-row gap-4">
-              <label htmlFor="profilePicture">Choose a profile picture:</label>
-              <input type="file" {...register("image")} id="profilePicture" name="file" accept="image/png, image/jpeg" required/>
-            </div>
-            <div className="flex flex-row gap-2">
-              <button type="button" className="mt-6 bg-red-500 hover:bg-indigo-600 text-white font-bold mb-2 py-2 px-4 rounded focus:outline-none focus:shadow-outline" onClick={hideModal}>Cancel</button>
-              <button type="submit" className="mt-6 bg-blue-500 hover:bg-indigo-600 text-white font-bold mb-2 py-2 px-4 rounded focus:outline-none focus:shadow-outline">Update</button>
-            </div>
-          </form>
-        </div>
+      {modalVisibility && (
+        <div id="profileModal" className="pt-6">
+        <form id="UpdateProfilePicture" onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2" method="POST" encType="multipart/form-data" action="">
+          <div className="flex flex-row gap-4">
+            <label htmlFor="profilePicture">Choose a profile picture:</label>
+            <input type="file" {...register("image")} id="profilePicture" name="file" accept="image/png, image/jpeg" required/>
+          </div>
+          <div className="flex flex-row gap-2">
+            <button type="button" className="mt-6 bg-red-500 hover:bg-indigo-600 text-white font-bold mb-2 py-2 px-4 rounded focus:outline-none focus:shadow-outline" onClick={hideModal}>Cancel</button>
+            <button type="submit" className="mt-6 bg-blue-500 hover:bg-indigo-600 text-white font-bold mb-2 py-2 px-4 rounded focus:outline-none focus:shadow-outline">Update</button>
+          </div>
+        </form>
+      </div>
+      )}
       </div>
 
     </div>
