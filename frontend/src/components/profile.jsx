@@ -6,9 +6,20 @@ export default function Profile() {
   const { register, handleSubmit } = useForm();
   const [username, setUsername] = useState('');
   const [image, setImage] = useState('');
+  let [count, setCount] = useState(0);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  
+  function switchFormDisplay () {
+    setCount((oldCount) => oldCount + 1);
+    if(count % 2) {
+      hideModal()
+    } else {
+      showModal()
+    }
+
+  }
 
   useEffect(() => {
     fetch(`http://localhost:3000/users/profile`,  {
@@ -46,6 +57,7 @@ export default function Profile() {
   function hideModal() {
     const profileModal = document.getElementById('profileModal');
     profileModal.classList.add('hidden');
+    setCount((oldCount) => oldCount + 1);
   }
   
   const onSubmit = async (data) => {3
@@ -75,7 +87,7 @@ export default function Profile() {
       console.error("Error uploading image:", error);
     }
   };
-
+  
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
 
@@ -87,10 +99,7 @@ export default function Profile() {
       
       <div>
         <img src={image} className="pb-3 w-[40px]"></img>
-          <a href="/update-profile-picture" className="mt-6 bg-blue-500 hover:bg-indigo-600 text-white font-bold mb-2 py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-            update profile picture
-          </a>
-        <button onClick={showModal}>Update profile picture</button>
+        <button id="updateProfileButton" onClick={switchFormDisplay}>Update profile picture</button>
 
         <div id="profileModal" className="hidden pt-6">
           <form id="UpdateProfilePicture" onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2" method="POST" encType="multipart/form-data" action="">
