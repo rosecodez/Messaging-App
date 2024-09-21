@@ -48,9 +48,14 @@ export default function Profile() {
     profileModal.classList.add('hidden');
   }
   
-  const onSubmit = async (data) => {
+  const onSubmit = async (data) => {3
+    let profilePicture = document.getElementById("profilePicture");
+    const file = profilePicture.files[0]; 
+    console.log(file)
+
     const formData = new FormData();
-    formData.append("file", data.image[0]);
+    formData.append('file', file);
+    console.log(formData)
 
     try {
       const response = await fetch("http://localhost:3000/users/update-profile-picture", {
@@ -58,17 +63,18 @@ export default function Profile() {
         body: formData,
         credentials: "include",
       });
-
+  
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error("Failed to upload image");
+        throw new Error(errorData.error);
       }
-      const data = await response.json();
-      console.log("Upload successful:", data);
+      const uploadData = await response.json();
+      console.log("Upload successful:", uploadData);
+      hideModal();
     } catch (error) {
       console.error("Error uploading image:", error);
     }
-};
+  };
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
@@ -87,10 +93,10 @@ export default function Profile() {
         <button onClick={showModal}>Update profile picture</button>
 
         <div id="profileModal" className="hidden pt-6">
-          <form id="UpdateProfilePicture" onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2" method="POST" action="">
+          <form id="UpdateProfilePicture" onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2" method="POST" encType="multipart/form-data" action="">
             <div className="flex flex-row gap-4">
               <label htmlFor="profilePicture">Choose a profile picture:</label>
-              <input type="file" {...register("image")} id="profilePicture" name="profilePicture" accept="image/png, image/jpeg" required/>
+              <input type="file" {...register("image")} id="profilePicture" name="file" accept="image/png, image/jpeg" required/>
             </div>
             <div className="flex flex-row gap-2">
               <button type="button" className="mt-6 bg-red-500 hover:bg-indigo-600 text-white font-bold mb-2 py-2 px-4 rounded focus:outline-none focus:shadow-outline" onClick={hideModal}>Cancel</button>
