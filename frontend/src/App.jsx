@@ -4,7 +4,7 @@ import Home from './pages/homePage'
 import Login from "./pages/loginPage"
 import Signup from './pages/signupPage';
 import ProfilePage from './pages/profilePage';
-
+import ChatsPage from './pages/chatsPage';
 import './App.css'
 
 function App() {
@@ -16,6 +16,7 @@ function App() {
                 <Route path='/signup' element={<Signup/>}/>
                 <Route path='/logout' element={<Home/>}/>
                 <Route path='/profile' element={<ProfilePage/>}/>
+                <Route path='/chats' element={<ChatsPage/>}/>
                 
             </Routes>
         </Router>

@@ -1,14 +1,15 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import ProfileHeader from "../components/ProfileHeader";
 
-
-export default function Chats() {
+export default function ChatsPage() {
 
     return (
         <div>
+            <ProfileHeader />
             <div id="chats-left-side">
                 <div>
                     <h3>Chats</h3>
-                    <input type="search">Search Messenger</input>
+                    <div>Search Messenger</div>
                 </div>
             </div>
             <div id="chats-right-side">
@@ -21,7 +22,7 @@ export default function Chats() {
                 </div>
                 <div id="chats-right-side-bottom">
                     <div>Image</div>
-                    <input type="search">Aa</input>
+                    <div>Aa</div>
                     <div>Image</div>
                 </div>
             </div>
