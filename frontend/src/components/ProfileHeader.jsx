@@ -20,7 +20,7 @@ export default function ProfileHeader() {
     }
 
     return(
-        <header className="flex flex-row items-center justify-between pb-[70px]">
+        <header className="flex flex-row items-center justify-between pb-[30px]">
             <div id="header-left-panel" className="flex gap-2">
                 <a href="/profile" className="text-black no-underline hover:underline decoration-2 decoration-sky-500 underline-offset-8">
                 Profile
