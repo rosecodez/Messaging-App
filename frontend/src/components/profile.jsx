@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from 'react-hook-form';
-
+ 
 export default function Profile() {
   const { register, handleSubmit } = useForm();
   const [username, setUsername] = useState('');
