@@ -5,6 +5,7 @@ import imageIcon from "../assets/icons8-image-50.png";
 import threeDots from "../assets/icons8-3-dots-30.png";
 
 export default function ChatsPage() {
+    const [showImageIcon, setShowImageIcon] = useState(true);
 
     return (
         <div>
@@ -45,7 +46,9 @@ export default function ChatsPage() {
                         <div>Text</div>
                     </div>
                     <div id="chats-right-side-bottom" className="flex flex-row space-x-2 items-center">
-                        <img src={imageIcon} className="w-[32px]"/>
+                        {showImageIcon && (
+                            <img src={imageIcon} className="w-[32px]" />
+                        )}
 
                         {
                             /* when selected, hide img button insert,
@@ -57,9 +60,11 @@ export default function ChatsPage() {
                             onInput={(e) => {
                                 if (e.target.value === '') {
                                     e.target.style.height = '30px'
+                                    setShowImageIcon(true);
                                 } else {
                                     e.target.style.height = 'auto';
-                                e.target.style.height = `${e.target.scrollHeight}px`;
+                                    e.target.style.height = `${e.target.scrollHeight}px`;
+                                    setShowImageIcon(false);
                                 }
                             }}
                             className="max-h-[88px] h-[30px] w-full px-3 py-1 bg-white border shadow-sm border-slate-300 
