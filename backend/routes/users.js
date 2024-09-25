@@ -24,4 +24,7 @@ router.post(
   userController.user_update_profile_picture
 );
 
+// get all contacts
+router.get("/get-all-contacts", userController.user_get_all_contacts);
+
 module.exports = router;

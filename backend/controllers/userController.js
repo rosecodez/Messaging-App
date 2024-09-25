@@ -173,3 +173,28 @@ exports.user_update_profile_picture = asyncHandler(async (req, res, next) => {
     return res.status(500).json({ error: "Failed to upload image" });
   }
 });
+
+exports.user_get_all_contacts = asyncHandler(async (req, res, next) => {
+  try {
+    const user = req.session.user;
+    console.log(user);
+    if (!user) {
+      return res.status(401).json({ message: "Unauthorized, please log in." });
+    }
+
+    const userId = user.id;
+
+    const contacts = await prisma.user.findMany({
+      where: {
+        id: {
+          not: userId,
+        },
+      },
+    });
+
+    return res.status(200).json(contacts);
+  } catch (err) {
+    console.error("Error getting contacts", err);
+    return res.status(500).json({ error: "Failed to get contacts" });
+  }
+});
