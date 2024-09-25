@@ -7,28 +7,29 @@ import threeDots from "../assets/icons8-3-dots-30.png";
 export default function ChatsPage() {
     const [showImageIcon, setShowImageIcon] = useState(true);
     const [contacts, setContacts] = useState([]);
-    
+    const [previousTarget, setPreviousTarget] = useState(null);
+
     {/*
         /get-all-contacts
         */
     }
     useEffect(() => {
         const getAllContacts = async () => {
-          try {
+            try {
             const response = await fetch("http://localhost:3000/users/get-all-contacts", {
-              credentials: "include",
+                credentials: "include",
             });
             const data = await response.json();
             console.log("getAllContacts:", data);
             setContacts(data);
-          } catch (error) {
+            } catch (error) {
             console.error("Error checking authentication:", error);
-          }
+            }
         };
-    
-        getAllContacts();
-      }, []);
 
+        getAllContacts();
+    }, []);
+    
     return (
         <div>
             <ProfileHeader />
@@ -43,9 +44,17 @@ export default function ChatsPage() {
                         <div className="overflow-auto ">
                             {
                                 contacts.map((contact) =>
-                                    <li>{contact.username}</li>
+                                    <li onClick={(e) => {
+                                        // change font weight to bold on selected user
+                                        if (previousTarget) {
+                                            previousTarget.style.fontWeight = "normal";
+                                          }
+                                          e.currentTarget.style.fontWeight = "bold";
+                                          setPreviousTarget(e.currentTarget);
+                                    }} key={contact.username}>{contact.username}</li>
                                 )
                             }
+                            
                         </div>
                 </div>
 
