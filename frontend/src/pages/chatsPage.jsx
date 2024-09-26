@@ -23,7 +23,7 @@ export default function ChatsPage() {
             const response = await fetch("http://localhost:3000/users/get-all-contacts", {
                 credentials: "include",
             });
-            const data = await response.json();
+            const data = await response.json();""
             console.log("getAllContacts:", data);
             setContacts(data);
             } catch (error) {
@@ -65,7 +65,7 @@ export default function ChatsPage() {
                         <div className="overflow-auto ">
                             {
                                 contacts.map((contact) =>
-                                    <li onClick={(e) => {
+                                    <li className="cursor-pointer m-2 flex gap-1 items-center" onClick={(e) => {
                                         // fetch selected contact details
                                         getContactDetails(contact.id);
 
@@ -75,7 +75,9 @@ export default function ChatsPage() {
                                         }
                                         e.currentTarget.style.fontWeight = "bold";
                                         setPreviousTarget(e.currentTarget);
-                                    }} key={contact.username}>{contact.username}</li>
+                                    }} key={contact.username}>
+                                        <img src={contact.profile}/>
+                                        {contact.username}</li>
                                 )
                             }
                             
@@ -99,7 +101,6 @@ export default function ChatsPage() {
                         <div>Text</div>
                         <div>Text</div>
                         <div>Text</div>
-
                         
                     </div>
 
