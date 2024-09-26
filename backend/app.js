@@ -16,7 +16,7 @@ const cors = require("cors");
 require("dotenv").config({ path: "./backend/.env" });
 
 const usersRouter = require("./routes/users.js");
-const messageController = require("./routes/messages.js");
+const messagesRouter = require("./routes/messages.js");
 const appRouter = require("./routes/app-router.js");
 const app = express();
 
@@ -116,6 +116,7 @@ app.use((req, res, next) => {
 
 app.use("/", appRouter);
 app.use("/users", usersRouter);
+app.use("/messages", messagesRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
