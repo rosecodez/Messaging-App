@@ -16,6 +16,7 @@ const cors = require("cors");
 require("dotenv").config({ path: "./backend/.env" });
 
 const usersRouter = require("./routes/users.js");
+const messageController = require("./routes/messages.js");
 const appRouter = require("./routes/app-router.js");
 const app = express();
 

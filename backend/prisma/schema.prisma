@@ -14,13 +14,14 @@ datasource db {
 }
 
 model User {
-  id       String    @id @default(uuid())
-  username String    @unique
-  name     String?
-  password String
-  profile  String    @default("https://res.cloudinary.com/dbmnceulk/image/upload/v1726786843/MessagingApp/xwhnyzgqeliffxa9lsrm.png")
-  Session  Session[]
-  Message  Message[]
+  id            String         @id @default(uuid())
+  username      String         @unique
+  name          String?
+  password      String
+  profile       String         @default("https://res.cloudinary.com/dbmnceulk/image/upload/v1726786843/MessagingApp/xwhnyzgqeliffxa9lsrm.png")
+  Session       Session[]
+  Message       Message[]
+  conversations Conversation[] @relation("UserConversations")
 }
 
 model Session {
@@ -32,10 +33,18 @@ model Session {
   user      User?    @relation(fields: [userId], references: [id])
 }
 
+model Conversation {
+  id           String    @id @default(cuid())
+  participants User[]    @relation("UserConversations")
+  messages     Message[]
+}
+
 model Message {
-  id     Int      @id @default(autoincrement())
-  text   String
-  sentAt DateTime @default(now())
-  userId String?
-  User   User?    @relation(fields: [userId], references: [id])
+  id             Int           @id @default(autoincrement())
+  text           String
+  sentAt         DateTime      @default(now())
+  userId         String?
+  User           User?         @relation(fields: [userId], references: [id])
+  Conversation   Conversation? @relation(fields: [conversationId], references: [id])
+  conversationId String?
 }
