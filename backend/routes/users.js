@@ -27,4 +27,7 @@ router.post(
 // get all contacts
 router.get("/get-all-contacts", userController.user_get_all_contacts);
 
+// get contact by id
+router.get("/:userId/details", userController.user_get_contact_by_id);
+
 module.exports = router;

@@ -198,3 +198,26 @@ exports.user_get_all_contacts = asyncHandler(async (req, res, next) => {
     return res.status(500).json({ error: "Failed to get contacts" });
   }
 });
+
+exports.user_get_contact_by_id = asyncHandler(async (req, res, next) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: req.params.userId },
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json({
+      user: {
+        id: user.id,
+        username: user.username,
+        profile: user.profile,
+      },
+    });
+  } catch (err) {
+    console.error("Error getting contact details", err);
+    return res.status(500).json({ error: "Failed to get contact details" });
+  }
+});

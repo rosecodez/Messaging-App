@@ -8,6 +8,8 @@ export default function ChatsPage() {
     const [showImageIcon, setShowImageIcon] = useState(true);
     const [contacts, setContacts] = useState([]);
     const [previousTarget, setPreviousTarget] = useState(null);
+    const [contactDetails, setContactDetails] = useState(null);
+    const [contactMessages, setContactMessages] = useState([]);
 
     {/*
         /get-all-contacts
@@ -23,13 +25,29 @@ export default function ChatsPage() {
             console.log("getAllContacts:", data);
             setContacts(data);
             } catch (error) {
-            console.error("Error checking authentication:", error);
+            console.error("Error getting contacts:", error);
             }
         };
 
         getAllContacts();
     }, []);
-    
+
+    const getContactDetails = async (userId) => {
+        try {
+            // fetch contact details
+            const contactDetailsResponse = await fetch(`http://localhost:3000/users/${userId}/details`, {
+                credentials: "include",
+            });
+
+            const contactDetails = await contactDetailsResponse.json();
+            console.log("getContactDetails", contactDetails);
+            setContactDetails(contactDetails);
+
+            } catch (error) {
+            console.error("Error fetching contact details", error);
+            }
+    }
+
     return (
         <div>
             <ProfileHeader />
@@ -45,12 +63,15 @@ export default function ChatsPage() {
                             {
                                 contacts.map((contact) =>
                                     <li onClick={(e) => {
+                                        // fetch selected contact details 
+                                        getContactDetails(contact.id);
+
                                         // change font weight to bold on selected user
                                         if (previousTarget) {
                                             previousTarget.style.fontWeight = "normal";
-                                          }
-                                          e.currentTarget.style.fontWeight = "bold";
-                                          setPreviousTarget(e.currentTarget);
+                                        }
+                                        e.currentTarget.style.fontWeight = "bold";
+                                        setPreviousTarget(e.currentTarget);
                                     }} key={contact.username}>{contact.username}</li>
                                 )
                             }
@@ -75,20 +96,7 @@ export default function ChatsPage() {
                         <div>Text</div>
                         <div>Text</div>
                         <div>Text</div>
-                        <div>Text</div>
-                        <div>Text</div>
-                        <div>Text</div>
-                        <div>Text</div>
-                        <div>Text</div>
-                        <div>Text</div>
-                        <div>Text</div>
-                        <div>Text</div>
-                        <div>Text</div>
-                        <div>Text</div>
-                        <div>Text</div>
-                        <div>Text</div>
-                        <div>Text</div>
-                        <div>Text</div>
+
                         
                     </div>
 
