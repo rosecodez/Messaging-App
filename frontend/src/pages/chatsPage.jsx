@@ -9,6 +9,8 @@ export default function ChatsPage() {
     const [contacts, setContacts] = useState([]);
     const [previousTarget, setPreviousTarget] = useState(null);
     const [contactDetails, setContactDetails] = useState(null);
+    const [contactProfile, setContactProfile] = useState("");
+    const [contactUsername, setContactUsername] = useState("");
     const [contactMessages, setContactMessages] = useState([]);
 
     {/*
@@ -39,15 +41,16 @@ export default function ChatsPage() {
                 credentials: "include",
             });
 
-            const contactDetails = await contactDetailsResponse.json();
+            const contactDetailsData = await contactDetailsResponse.json();
             console.log("getContactDetails", contactDetails);
-            setContactDetails(contactDetails);
-
+            setContactDetails(contactDetailsData);
+            setContactProfile(contactDetailsData.user.profile);
+            setContactUsername(contactDetailsData.user.username)
             } catch (error) {
             console.error("Error fetching contact details", error);
             }
     }
-
+    
     return (
         <div>
             <ProfileHeader />
@@ -63,7 +66,7 @@ export default function ChatsPage() {
                             {
                                 contacts.map((contact) =>
                                     <li onClick={(e) => {
-                                        // fetch selected contact details 
+                                        // fetch selected contact details
                                         getContactDetails(contact.id);
 
                                         // change font weight to bold on selected user
@@ -82,8 +85,8 @@ export default function ChatsPage() {
                 <div id="chats-right-side" className="pl-3 flex flex-col border border-green-500 w-full justify-between">
                     <div id="chats-right-side-top" className="flex flex-row items-center">
                         <div className="flex items-center space-x-2 py-2">
-                            <div>Logo</div>
-                            <div className="text-xl font-medium">User</div>
+                            <img src={contactProfile}/>
+                            <div className="text-xl font-medium">{contactUsername}</div>
                         </div>
                         <img src={threeDots} className="ml-auto pb-2 w-[23px]" />
                     </div>
