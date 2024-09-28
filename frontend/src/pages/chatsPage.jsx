@@ -13,10 +13,9 @@ export default function ChatsPage() {
     const [contactUsername, setContactUsername] = useState("");
     const [contactMessages, setContactMessages] = useState([]);
 
-    {/*
-        /get-all-contacts
-        */
-    }
+    let [messageText, setMessageText] = useState("");
+
+    // get all contacts
     useEffect(() => {
         const getAllContacts = async () => {
             try {
@@ -34,23 +33,51 @@ export default function ChatsPage() {
         getAllContacts();
     }, []);
 
+    // fetch contact details
     const getContactDetails = async (userId) => {
         try {
-            // fetch contact details
             const contactDetailsResponse = await fetch(`http://localhost:3000/users/${userId}/details`, {
                 credentials: "include",
             });
-
             const contactDetailsData = await contactDetailsResponse.json();
-            console.log("getContactDetails", contactDetails);
             setContactDetails(contactDetailsData);
             setContactProfile(contactDetailsData.user.profile);
             setContactUsername(contactDetailsData.user.username)
-            } catch (error) {
-            console.error("Error fetching contact details", error);
-            }
+            console.log(contactDetailsData);
+        } catch (error) {
+        console.error("Error fetching contact details", error);
+        }
     }
-    
+
+    const sendMessageText = async () => {
+        if (messageText === "") {
+            return;
+        }
+
+        try {
+            const response = await fetch(`http://localhost:3000/messages/new-message`, {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: "include",
+                body: JSON.stringify({
+                    text: messageText,
+                }),
+            });
+            if (!response.ok) {
+                console.error("Failed to send message");
+            }
+            const newMessage = await response.json();
+            setContactMessages((prevMessages) => [...prevMessages, newMessage]);
+            
+            console.log(newMessage)
+            setMessageText("");
+        } catch (error) {
+            console.error("Error in sendMessageText:", error);
+        }
+    };
+
     return (
         <div>
             <ProfileHeader />
@@ -63,24 +90,32 @@ export default function ChatsPage() {
                             placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1" placeholder="Search Messenger" />
                         </div>
                         <div className="overflow-auto ">
-                            {
-                                contacts.map((contact) =>
-                                    <li className="cursor-pointer m-2 flex gap-1 items-center" onClick={(e) => {
-                                        // fetch selected contact details
-                                        getContactDetails(contact.id);
+                            <ul>
+                                {
+                                    
+                                    contacts.map((contact) =>
+                                            <li key={contact.username} className="cursor-pointer m-2 flex gap-1 items-center" onClick={(e) => {
+                                                // fetch selected contact details
+                                                getContactDetails(contact.id);
 
-                                        // change font weight to bold on selected user
-                                        if (previousTarget) {
-                                            previousTarget.style.fontWeight = "normal";
-                                        }
-                                        e.currentTarget.style.fontWeight = "bold";
-                                        setPreviousTarget(e.currentTarget);
-                                    }} key={contact.username}>
-                                        <img src={contact.profile}/>
-                                        {contact.username}</li>
-                                )
-                            }
-                            
+                                                //clear form when switching between users
+                                                setMessageText("");
+
+                                                // change font weight to bold on selected user
+                                                if (previousTarget) {
+                                                    previousTarget.style.fontWeight = "normal";
+                                                }
+                                                e.currentTarget.style.fontWeight = "bold";
+                                                setPreviousTarget(e.currentTarget);
+
+                                            }}>
+                                                <img src={contact.profile}/>
+                                                {contact.username}</li>
+                                        
+                                    )
+                                    
+                                }
+                            </ul>
                         </div>
                 </div>
 
@@ -116,7 +151,9 @@ export default function ChatsPage() {
 
                         <textarea
                             name="text"
+                            value={messageText}
                             onInput={(e) => {
+                                setMessageText(e.target.value);
                                 if (e.target.value === '') {
                                     e.target.style.height = '30px'
                                     setShowImageIcon(true);
@@ -132,7 +169,7 @@ export default function ChatsPage() {
                             placeholder="Aa"
                         ></textarea>
 
-                        <button>Send</button>
+                        <button onClick={sendMessageText}>Send</button>
                         
                     </div>
                     
