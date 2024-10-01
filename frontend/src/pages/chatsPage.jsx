@@ -8,12 +8,30 @@ export default function ChatsPage() {
     const [showImageIcon, setShowImageIcon] = useState(true);
     const [contacts, setContacts] = useState([]);
     const [previousTarget, setPreviousTarget] = useState(null);
-    const [contactDetails, setContactDetails] = useState(null);
+    const [contactId, setContactId] = useState(null);
     const [contactProfile, setContactProfile] = useState("");
     const [contactUsername, setContactUsername] = useState("");
     const [contactMessages, setContactMessages] = useState([]);
-
     let [messageText, setMessageText] = useState("");
+
+    /* what do i want to display in the conversation?
+    - first check if user is logged in, to handle the possible error
+    messages from a conversation, between 2 users
+    who are these users? 1->frontend(that we are fetching, "contactId" stores the id)
+                                -> how will i use the id in frontend to access backend, so i need to send it somehow
+                          2->backend(that we are logged in with -> req.user.session)
+    ?how will the route look like
+    -> conversation route to first check existing conversation or create a new one
+        with:
+            - participants [];
+            - messages []; 
+    -> how is this conversation created? what triggers it?
+        - whenever we press Send, BUT it also creates a text, so basically when a text is created
+    
+    -> when are the conversations going to be display?
+        = when we click on an user, we want to display the texts
+    --> texts should be fetched with their user relationship, so i dont need to make another route
+    */
 
     // get all contacts
     useEffect(() => {
@@ -40,7 +58,7 @@ export default function ChatsPage() {
                 credentials: "include",
             });
             const contactDetailsData = await contactDetailsResponse.json();
-            setContactDetails(contactDetailsData);
+            setContactId(contactDetailsData.user.id);
             setContactProfile(contactDetailsData.user.profile);
             setContactUsername(contactDetailsData.user.username)
             console.log(contactDetailsData);
@@ -77,7 +95,27 @@ export default function ChatsPage() {
             console.error("Error in sendMessageText:", error);
         }
     };
-
+    const getConversation = async(id) => {
+        try {
+            const response = await fetch("http://localhost:3000/messages/conversation", {
+                method: "POST",
+                headers: {
+                    'Content-Type': "application/json" ,
+                },
+                credentials: "include",
+                body: JSON.stringify({
+                    userId: id,
+                }),
+            })
+            if(!response.ok) {
+                console.error("Failed to fetch conversation")
+            }
+            const conversation = await response.json();
+            console.log("conversation", conversation)
+        } catch(error) {
+            console.log("Error in getConversation", error)
+        }
+    }
     return (
         <div>
             <ProfileHeader />
@@ -97,7 +135,7 @@ export default function ChatsPage() {
                                             <li key={contact.username} className="cursor-pointer m-2 flex gap-1 items-center" onClick={(e) => {
                                                 // fetch selected contact details
                                                 getContactDetails(contact.id);
-
+                                                getConversation(contact.id);
                                                 //clear form when switching between users
                                                 setMessageText("");
 

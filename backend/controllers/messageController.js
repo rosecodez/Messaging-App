@@ -4,48 +4,43 @@ const prisma = require("../prisma/prisma");
 
 exports.conversation_post = asyncHandler(async (req, res, next) => {
   const loggedUser = req.session.user;
-  const { text, conversationId } = req.body;
-
-  if (!user) {
-    return res.status(404).json({ message: "User not found" });
+  const { userId } = req.body;
+  console.log("user id", userId);
+  if (!loggedUser) {
+    return res.status(404).json({ message: "User not found. Log in please" });
   }
 
-  if (!conversationId || !text) {
-    return res
-      .status(400)
-      .json({ message: "conversationId or text not found" });
-  }
-
-  const userId = user.id;
   try {
-    const existingConversation = await prisma.conversation.findUnique({
-      where: { id: conversationId },
+    const existingConversation = await prisma.conversation.findFirst({
+      where: {
+        participants: {
+          every: {
+            id: {
+              in: [loggedUser.id, userId],
+            },
+          },
+        },
+      },
       include: { participants: true },
     });
 
     if (!existingConversation) {
-      return res
-        .status(404)
-        .json({ message: "existingConversation not found" });
-    }
-
-    // new conversation
-    const newConversation = await prisma.conversation.create({
-      data: {
-        where: {
+      existingConversation = await prisma.conversation.create({
+        data: {
           participants: {
-            connect: [{ id: loggedUser }, { id: userId }],
+            connect: [{ id: loggedUser.id }, { id: userId }],
           },
         },
-      },
-    });
+        include: { participants: true },
+      });
+    }
 
-    return res.status(201).json(newMessage);
+    return res.status(201).json(existingConversation);
   } catch (error) {
-    console.error("Error sending message:", error);
-    return res
-      .status(500)
-      .json({ error: "An error occurred while sending the message." });
+    console.error("Error sending existingConversation:", error);
+    return res.status(500).json({
+      error: "An error occurred while sending the existingConversation.",
+    });
   }
 });
 
