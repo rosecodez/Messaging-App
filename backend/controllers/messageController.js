@@ -81,7 +81,9 @@ exports.new_message_post = asyncHandler(async (req, res, next) => {
       data: {
         text,
         userId: user.id,
+        conversationId: conversationId,
       },
+      include: { conversation: true },
     });
 
     return res.status(201).json(newMessage);
