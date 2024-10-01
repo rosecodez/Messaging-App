@@ -12,26 +12,9 @@ export default function ChatsPage() {
     const [contactProfile, setContactProfile] = useState("");
     const [contactUsername, setContactUsername] = useState("");
     const [contactMessages, setContactMessages] = useState([]);
+    const [conversationId, setConversationId] = useState(null);
     let [messageText, setMessageText] = useState("");
 
-    /* what do i want to display in the conversation?
-    - first check if user is logged in, to handle the possible error
-    messages from a conversation, between 2 users
-    who are these users? 1->frontend(that we are fetching, "contactId" stores the id)
-                                -> how will i use the id in frontend to access backend, so i need to send it somehow
-                          2->backend(that we are logged in with -> req.user.session)
-    ?how will the route look like
-    -> conversation route to first check existing conversation or create a new one
-        with:
-            - participants [];
-            - messages []; 
-    -> how is this conversation created? what triggers it?
-        - whenever we press Send, BUT it also creates a text, so basically when a text is created
-    
-    -> when are the conversations going to be display?
-        = when we click on an user, we want to display the texts
-    --> texts should be fetched with their user relationship, so i dont need to make another route
-    */
 
     // get all contacts
     useEffect(() => {
@@ -52,15 +35,27 @@ export default function ChatsPage() {
     }, []);
 
     // fetch contact details
-    const getContactDetails = async (userId) => {
+    const getContactDetails = async (userId, conversationId) => {
         try {
-            const contactDetailsResponse = await fetch(`http://localhost:3000/users/${userId}/details`, {
+            const contactDetailsResponse = await fetch(`http://localhost:3000/users/${userId}/details?conversationId=${conversationId}`, {
+                method: "GET",
+                headers: {
+                    'Content-Type': 'application/json',
+                },
                 credentials: "include",
             });
+
+
+            if (!contactDetailsResponse.ok) {
+                console.error("Error fetching contact details");
+                return;
+            }
             const contactDetailsData = await contactDetailsResponse.json();
+
             setContactId(contactDetailsData.user.id);
             setContactProfile(contactDetailsData.user.profile);
             setContactUsername(contactDetailsData.user.username)
+            
             console.log(contactDetailsData);
         } catch (error) {
         console.error("Error fetching contact details", error);
@@ -81,6 +76,7 @@ export default function ChatsPage() {
                 credentials: "include",
                 body: JSON.stringify({
                     text: messageText,
+                    conversationId
                 }),
             });
             if (!response.ok) {
@@ -95,6 +91,7 @@ export default function ChatsPage() {
             console.error("Error in sendMessageText:", error);
         }
     };
+
     const getConversation = async(id) => {
         try {
             const response = await fetch("http://localhost:3000/messages/conversation", {
@@ -112,10 +109,13 @@ export default function ChatsPage() {
             }
             const conversation = await response.json();
             console.log("conversation", conversation)
+            setConversationId(conversation.id)
+            return conversation
         } catch(error) {
             console.log("Error in getConversation", error)
         }
     }
+    
     return (
         <div>
             <ProfileHeader />
@@ -132,20 +132,26 @@ export default function ChatsPage() {
                                 {
                                     
                                     contacts.map((contact) =>
-                                            <li key={contact.username} className="cursor-pointer m-2 flex gap-1 items-center" onClick={(e) => {
-                                                // fetch selected contact details
-                                                getContactDetails(contact.id);
-                                                getConversation(contact.id);
-                                                //clear form when switching between users
-                                                setMessageText("");
+                                            <li key={contact.username} className="cursor-pointer m-2 flex gap-1 items-center" onClick=
+                                            {
+                                                async(e) => {
+                                                    //clear form when switching between users
+                                                    setMessageText("");
 
-                                                // change font weight to bold on selected user
-                                                if (previousTarget) {
-                                                    previousTarget.style.fontWeight = "normal";
-                                                }
-                                                e.currentTarget.style.fontWeight = "bold";
-                                                setPreviousTarget(e.currentTarget);
+                                                    // change font weight to bold on selected user
+                                                    if (previousTarget) {
+                                                        previousTarget.style.fontWeight = "normal";
+                                                    }
+                                                    e.currentTarget.style.fontWeight = "bold";
+                                                    setPreviousTarget(e.currentTarget);
 
+                                                    try {
+                                                        const conversation = await getConversation(contact.id);
+                                                        console.log(conversation.id)
+                                                        await getContactDetails(contact.id, conversation.id);
+                                                    } catch (error) {
+                                                        console.log(error)
+                                                    }
                                             }}>
                                                 <img src={contact.profile}/>
                                                 {contact.username}</li>

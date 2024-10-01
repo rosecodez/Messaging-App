@@ -199,13 +199,27 @@ exports.user_get_all_contacts = asyncHandler(async (req, res, next) => {
 });
 
 exports.user_get_contact_by_id = asyncHandler(async (req, res, next) => {
+  const { userId } = req.params;
+  const { conversationId } = req.query;
+
+  console.log(conversationId);
+
   try {
     const user = await prisma.user.findUnique({
-      where: { id: req.params.userId },
+      where: { id: userId },
     });
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
+    }
+
+    const conversation = await prisma.conversation.findUnique({
+      where: { id: conversationId },
+      include: { participants: true },
+    });
+
+    if (!conversation) {
+      return res.status(404).json({ message: "Conversation not found" });
     }
 
     res.json({
