@@ -11,7 +11,7 @@ export default function ChatsPage() {
     const [contactId, setContactId] = useState(null);
     const [contactProfile, setContactProfile] = useState("");
     const [contactUsername, setContactUsername] = useState("");
-    const [contactMessages, setContactMessages] = useState([]);
+    const [messages, setMessages] = useState([]);
     const [conversationId, setConversationId] = useState(null);
     let [messageText, setMessageText] = useState("");
 
@@ -20,14 +20,14 @@ export default function ChatsPage() {
     useEffect(() => {
         const getAllContacts = async () => {
             try {
-            const response = await fetch("http://localhost:3000/users/get-all-contacts", {
-                credentials: "include",
-            });
-            const data = await response.json();""
-            console.log("getAllContacts:", data);
-            setContacts(data);
+                const response = await fetch("http://localhost:3000/users/get-all-contacts", {
+                    credentials: "include",
+                });
+                const data = await response.json();""
+                console.log("getAllContacts:", data);
+                setContacts(data);
             } catch (error) {
-            console.error("Error getting contacts:", error);
+                console.error("Error getting contacts:", error);
             }
         };
 
@@ -83,8 +83,7 @@ export default function ChatsPage() {
                 console.error("Failed to send message");
             }
             const newMessage = await response.json();
-            setContactMessages((prevMessages) => [...prevMessages, newMessage]);
-            
+
             console.log(newMessage)
             setMessageText("");
         } catch (error) {
@@ -108,8 +107,9 @@ export default function ChatsPage() {
                 console.error("Failed to fetch conversation")
             }
             const conversation = await response.json();
-            console.log("conversation", conversation)
-            setConversationId(conversation.id)
+            console.log("conversation", conversation);
+            setConversationId(conversation.id);
+            setMessages(conversation.messages);
             return conversation
         } catch(error) {
             console.log("Error in getConversation", error)
@@ -130,9 +130,10 @@ export default function ChatsPage() {
                         <div className="overflow-auto ">
                             <ul>
                                 {
-                                    
-                                    contacts.map((contact) =>
-                                            <li key={contact.username} className="cursor-pointer m-2 flex gap-1 items-center" onClick=
+                                    contacts.map
+                                    (
+                                        (contact) =>
+                                            <li key={contact.id} className="cursor-pointer m-2 flex gap-1 items-center" onClick=
                                             {
                                                 async(e) => {
                                                     //clear form when switching between users
@@ -155,9 +156,7 @@ export default function ChatsPage() {
                                             }}>
                                                 <img src={contact.profile}/>
                                                 {contact.username}</li>
-                                        
                                     )
-                                    
                                 }
                             </ul>
                         </div>
@@ -173,13 +172,8 @@ export default function ChatsPage() {
                     </div>
 
                     <div id="chats-main" className="overflow-auto">
-                        <div>Text</div>
-                        <div>Text</div>
-                        <div>Text</div>
-                        <div>Text</div>
-                        <div>Text</div>
-                        <div>Text</div>
-                        <div>Text</div>
+                        <ul>{messages.map((message) => 
+                            <li key={message.id} className="m-2 flex gap-1 items-center">{message.text}{message.user.username}{message.sentAt}</li>)}</ul>
                         
                     </div>
 

@@ -183,6 +183,7 @@ exports.user_get_all_contacts = asyncHandler(async (req, res, next) => {
 
     const userId = user.id;
 
+    // get all contacts that are not the logged user, for displaying as possible contacts
     const contacts = await prisma.user.findMany({
       where: {
         id: {
