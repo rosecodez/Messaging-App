@@ -37,7 +37,6 @@ exports.conversation_post = asyncHandler(async (req, res, next) => {
           participants: {
             connect: [{ id: loggedUser.id }, { id: userId }],
           },
-          messages: [],
         },
         include: {
           messages: {

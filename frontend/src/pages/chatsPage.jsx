@@ -13,6 +13,7 @@ export default function ChatsPage() {
     const [contactUsername, setContactUsername] = useState("");
     const [messages, setMessages] = useState([]);
     const [conversationId, setConversationId] = useState(null);
+    const [displayChatRightSide, setDisplayChatRightSide] = useState(false);
     let [messageText, setMessageText] = useState("");
 
 
@@ -137,6 +138,7 @@ export default function ChatsPage() {
                                             {
                                                 async(e) => {
                                                     //clear form when switching between users
+                                                    setDisplayChatRightSide(true)
                                                     setMessageText("");
 
                                                     // change font weight to bold on selected user
@@ -176,8 +178,9 @@ export default function ChatsPage() {
                             <li key={message.id} className="m-2 flex gap-1 items-center">{message.text}{message.user.username}{message.sentAt}</li>)}</ul>
                         
                     </div>
-
-                    <div id="chats-right-side-bottom" className="flex flex-row space-x-2 items-center">
+                    
+                    {displayChatRightSide &&
+                        <div id="chats-right-side-bottom" className="flex flex-row space-x-2 items-center">
                         {showImageIcon && (
                             <img src={imageIcon} className="w-[32px]" />
                         )}
@@ -210,6 +213,8 @@ export default function ChatsPage() {
                         <button onClick={sendMessageText}>Send</button>
                         
                     </div>
+                    }
+                    
                     
                 </div>
                   
