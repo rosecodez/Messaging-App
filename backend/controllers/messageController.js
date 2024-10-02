@@ -21,6 +21,7 @@ exports.conversation_post = asyncHandler(async (req, res, next) => {
           },
         },
       },
+
       include: {
         participants: true,
         messages: {

@@ -14,6 +14,10 @@ export default function ChatsPage() {
     const [messages, setMessages] = useState([]);
     const [conversationId, setConversationId] = useState(null);
     const [displayChatRightSide, setDisplayChatRightSide] = useState(false);
+    const [participants, setParticipants] = useState([]);
+    const [colors, setColors] = useState([]);
+    const [convUsers, setConvUsers] = useState([]);
+
     let [messageText, setMessageText] = useState("");
 
 
@@ -57,7 +61,6 @@ export default function ChatsPage() {
             setContactProfile(contactDetailsData.user.profile);
             setContactUsername(contactDetailsData.user.username)
             
-            console.log(contactDetailsData);
         } catch (error) {
         console.error("Error fetching contact details", error);
         }
@@ -104,14 +107,23 @@ export default function ChatsPage() {
                     userId: id,
                 }),
             })
+
             if(!response.ok) {
                 console.error("Failed to fetch conversation")
             }
+
             const conversation = await response.json();
             console.log("conversation", conversation);
+            console.log("conversation messages", conversation.messages);
+            console.log("conversation participants", conversation.participants);
+
             setConversationId(conversation.id);
             setMessages(conversation.messages);
+            setParticipants(conversation.participants);
+            
+            console.log("conv users", users)
             return conversation
+            
         } catch(error) {
             console.log("Error in getConversation", error)
         }
@@ -150,7 +162,6 @@ export default function ChatsPage() {
 
                                                     try {
                                                         const conversation = await getConversation(contact.id);
-                                                        console.log(conversation.id)
                                                         await getContactDetails(contact.id, conversation.id);
                                                     } catch (error) {
                                                         console.log(error)
@@ -174,9 +185,25 @@ export default function ChatsPage() {
                     </div>
 
                     <div id="chats-main" className="overflow-auto">
-                        <ul>{messages.map((message) => 
-                            <li key={message.id} className="m-2 flex gap-1 items-center">{message.text}{message.user.username}{message.sentAt}</li>)}</ul>
-                        
+                        <ul>
+                            {messages.map((message) => {
+                                let participantColor = "";
+                                console.log(message.userId)
+                                if (participants[0] && message.userId === participants[0].id) {
+                                    participantColor = participants[0].color;
+                                } else if (participants[1] && message.userId === participants[1].id) {
+                                    participantColor = participants[1].color;
+                                }
+
+                                return (
+                                    <li key={message.id} className="m-2 flex gap-1 items-center">
+                                        <p style={{ background: participantColor }}>{message.text}</p>
+                                        <p>{message.user.username}</p>
+                                        <p>{message.sentAt}</p>
+                                    </li>
+                                );
+                            })}
+                        </ul>
                     </div>
                     
                     {displayChatRightSide &&
@@ -204,6 +231,7 @@ export default function ChatsPage() {
                                     setShowImageIcon(false);
                                 }
                             }}
+                            
                             className="max-h-[88px] h-[30px] w-full px-3 py-1 bg-white border shadow-sm border-slate-300 
                                 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 
                                 block rounded-md sm:text-sm focus:ring-1 overflow-auto resize-none"

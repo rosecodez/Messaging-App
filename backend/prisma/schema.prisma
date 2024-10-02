@@ -22,6 +22,7 @@ model User {
   Session       Session[]
   Message       Message[]
   conversations Conversation[] @relation("UserConversations")
+  color         String?
 }
 
 model Session {
