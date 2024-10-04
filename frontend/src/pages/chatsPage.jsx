@@ -3,6 +3,7 @@ import ProfileHeader from "../components/ProfileHeader";
 import searchIcon from "../assets/icons8-search-50.png";
 import imageIcon from "../assets/icons8-image-50.png";
 import threeDots from "../assets/icons8-3-dots-30.png";
+import { DateTime } from "luxon";
 
 export default function ChatsPage() {
     const [showImageIcon, setShowImageIcon] = useState(true);
@@ -185,23 +186,57 @@ export default function ChatsPage() {
                     </div>
 
                     <div id="chats-main" className="overflow-auto">
-                        <ul>
+                        <ul>   
+
+                            {
+                                /* - map conversation messages,
+                                   - display participant messages left/right with different colours
+                                   
+                                   - to do: sort messages by sentAt time
+                                   - to do: could compare time when message was sent with current time 
+                                            to add something like "just now, 2mins ago etc."    */
+                            }
+
                             {messages.map((message) => {
-                                let participantColor = "";
-                                console.log(message.userId)
-                                if (participants[0] && message.userId === participants[0].id) {
-                                    participantColor = participants[0].color;
-                                } else if (participants[1] && message.userId === participants[1].id) {
-                                    participantColor = participants[1].color;
+                                let [participantColor1, participantColor2] = '';
+
+                                {
+                                    /* you/ logged in user*/
                                 }
 
-                                return (
-                                    <li key={message.id} className="m-2 flex gap-1 items-center">
-                                        <p style={{ background: participantColor }}>{message.text}</p>
-                                        <p>{message.user.username}</p>
-                                        <p>{message.sentAt}</p>
-                                    </li>
-                                );
+                                if (participants[1] && message.userId === participants[1].id) {
+                                    participantColor1 = participants[1].color;
+                                    let formattedDate = DateTime.fromISO(message.sentAt).toLocaleString(DateTime.DATETIME_MED);
+                                    return (
+                                        <div className="flex flex-col content-start text-wrap gap-1 items-center justify-end">
+                                            <p className="text-[13px] self-start">{message.user.username}</p>
+                                            <li key={message.id} className="text-white self-start w-min rounded-lg bg-indigo-500 m-2 p-3">
+                                                <p>{message.text}</p>
+                                            </li>
+                                            
+                                            <p className="text-[13px] self-start">{formattedDate}</p>
+                                        </div>
+                                        
+                                        
+                                    );
+                                    
+                                {
+                                    /* second user*/
+                                }
+                                
+                                } else if (participants[0] && message.userId === participants[0].id) {
+                                    participantColor2 = participants[0].color;
+                                    let formattedDate = DateTime.fromISO(message.sentAt).toLocaleString(DateTime.DATETIME_MED);
+                                    return (
+                                        <div className="flex flex-col content-start text-wrap gap-1 items-center justify-start">
+                                            <p className="text-[13px] self-end">You</p>
+                                            <li key={message.id} className="text-white self-end w-min rounded-lg bg-blue-500 mb-2 p-3">
+                                                <p>{message.text}</p>
+                                            </li>
+                                            <p className="text-[13px] self-end">{formattedDate}</p>
+                                        </div>
+                                    );
+                                }
                             })}
                         </ul>
                     </div>
