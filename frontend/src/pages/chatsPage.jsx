@@ -57,10 +57,12 @@ export default function ChatsPage() {
                 return;
             }
             const contactDetailsData = await contactDetailsResponse.json();
-
+            
+            console.log("!!!!!!!!!!!!!!!!!!!!contactDetailsData!!!!!!!!!!!!!!!!!!!!",  contactDetailsData)
             setContactId(contactDetailsData.user.id);
-            setContactProfile(contactDetailsData.user.profile);
+            console.log(contactDetailsData.user.profile);
             setContactUsername(contactDetailsData.user.username)
+            setContactProfile(contactDetailsData.user.profile);
             
         } catch (error) {
         console.error("Error fetching contact details", error);
@@ -98,6 +100,7 @@ export default function ChatsPage() {
 
     const getConversation = async(id) => {
         try {
+            console.log("Fetching conversation for userId:", id);
             const response = await fetch("http://localhost:3000/messages/conversation", {
                 method: "POST",
                 headers: {
@@ -114,15 +117,10 @@ export default function ChatsPage() {
             }
 
             const conversation = await response.json();
-            console.log("conversation", conversation);
-            console.log("conversation messages", conversation.messages);
-            console.log("conversation participants", conversation.participants);
 
             setConversationId(conversation.id);
             setMessages(conversation.messages);
-            setParticipants(conversation.participants);
             
-            console.log("conv users", users)
             return conversation
             
         } catch(error) {
@@ -160,12 +158,16 @@ export default function ChatsPage() {
                                                     }
                                                     e.currentTarget.style.fontWeight = "bold";
                                                     setPreviousTarget(e.currentTarget);
-
+                                                    
                                                     try {
                                                         const conversation = await getConversation(contact.id);
-                                                        await getContactDetails(contact.id, conversation.id);
+
+                                                        if(conversation.id){
+                                                            await getContactDetails(contact.id, conversation.id);
+                                                        } else { "getContactDetails in contacts map failed"}
+                                                        
                                                     } catch (error) {
-                                                        console.log(error)
+                                                        console.log("getContactDetails in contacts map failed")
                                                     }
                                             }}>
                                                 <img src={contact.profile}/>
@@ -179,8 +181,8 @@ export default function ChatsPage() {
                 <div id="chats-right-side" className="pl-3 flex flex-col border border-green-500 w-full justify-between">
                     <div id="chats-right-side-top" className="flex flex-row items-center">
                         <div className="flex items-center space-x-2 py-2">
-                            <img src={contactProfile}/>
-                            <div className="text-xl font-medium">{contactUsername}</div>
+                            <img src={contactProfile} />
+                            <p className="text-xl font-medium">{contactUsername}</p>
                         </div>
                         <img src={threeDots} className="ml-auto pb-2 w-[23px]" />
                     </div>
@@ -190,15 +192,17 @@ export default function ChatsPage() {
 
                             {
                                 /* - map conversation messages,
-                                   - display participant messages left/right with different colours
-                                   
+                                   - display participant messages left/right with different colors
+                                 
                                    - to do: sort messages by sentAt time
                                    - to do: could compare time when message was sent with current time 
-                                            to add something like "just now, 2mins ago etc."    */
+                                            to add something like "just now, 2mins ago etc." 
+                                   -        refresh page when user sends a message to user2, but need to go to the same conversation again   */
                             }
 
                             {messages.map((message) => {
                                 let [participantColor1, participantColor2] = '';
+                                let formattedDate = DateTime.fromISO(message.sentAt).toLocaleString(DateTime.DATETIME_MED);
 
                                 {
                                     /* you/ logged in user*/
@@ -206,7 +210,6 @@ export default function ChatsPage() {
 
                                 if (participants[1] && message.userId === participants[1].id) {
                                     participantColor1 = participants[1].color;
-                                    let formattedDate = DateTime.fromISO(message.sentAt).toLocaleString(DateTime.DATETIME_MED);
                                     return (
                                         <div className="flex flex-col content-start text-wrap gap-1 items-center justify-end">
                                             <p className="text-[13px] self-start">{message.user.username}</p>
@@ -226,7 +229,6 @@ export default function ChatsPage() {
                                 
                                 } else if (participants[0] && message.userId === participants[0].id) {
                                     participantColor2 = participants[0].color;
-                                    let formattedDate = DateTime.fromISO(message.sentAt).toLocaleString(DateTime.DATETIME_MED);
                                     return (
                                         <div className="flex flex-col content-start text-wrap gap-1 items-center justify-start">
                                             <p className="text-[13px] self-end">You</p>

@@ -6,6 +6,7 @@ exports.conversation_post = asyncHandler(async (req, res, next) => {
   const loggedUser = req.session.user;
   const { userId } = req.body;
 
+  console.log("Received userId:", req.body.userId);
   if (!loggedUser) {
     return res.status(404).json({ message: "User not found. Log in please" });
   }
@@ -50,7 +51,6 @@ exports.conversation_post = asyncHandler(async (req, res, next) => {
       });
     }
 
-    console.log(existingConversation);
     return res.status(201).json(existingConversation);
   } catch (error) {
     console.error("Error sending existingConversation:", error);
