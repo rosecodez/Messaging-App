@@ -235,3 +235,28 @@ exports.user_get_contact_by_id = asyncHandler(async (req, res, next) => {
     return res.status(500).json({ error: "Failed to get contact details" });
   }
 });
+
+exports.user_get_search = asyncHandler(async (req, res) => {
+  const { search } = req.query;
+
+  try {
+    const users = await prisma.user.findMany({
+      where: {
+        username: {
+          contains: search,
+          mode: "insensitive",
+        },
+      },
+      select: {
+        id: true,
+        username: true,
+        profile: true,
+      },
+    });
+
+    res.json(users);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: error });
+  }
+});
