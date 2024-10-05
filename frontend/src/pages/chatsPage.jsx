@@ -171,7 +171,31 @@ export default function ChatsPage() {
                                 {search.length > 0 ? (
                                     searchResults.length > 0 ? (
                                     searchResults.map((user) => (
-                                        <li key={user.id} className="cursor-pointer m-2 flex gap-1 items-center">
+                                        <li key={user.id} className="cursor-pointer m-2 flex gap-1 items-center" onClick=
+                                        {
+                                            async(e) => {
+                                                //clear form when switching between users
+                                                setDisplayChatRightSide(true)
+                                                setMessageText("");
+
+                                                // change font weight to bold on selected user
+                                                if (previousTarget) {
+                                                    previousTarget.style.fontWeight = "normal";
+                                                }
+                                                e.currentTarget.style.fontWeight = "bold";
+                                                setPreviousTarget(e.currentTarget);
+                                                
+                                                try {
+                                                    const conversation = await getConversation(contact.id);
+
+                                                    if(conversation.id){
+                                                        await getContactDetails(contact.id, conversation.id);
+                                                    } else { "getContactDetails in contacts map failed"}
+                                                    
+                                                } catch (error) {
+                                                    console.log("getContactDetails in contacts map failed")
+                                                }
+                                        }}>
                                             <img src={user.profile} alt={user.username} />
                                             {user.username}
                                         </li>

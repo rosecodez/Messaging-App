@@ -238,6 +238,7 @@ exports.user_get_contact_by_id = asyncHandler(async (req, res, next) => {
 
 exports.user_get_search = asyncHandler(async (req, res) => {
   const { search } = req.query;
+  const userId = req.session.user.id;
 
   try {
     const users = await prisma.user.findMany({
@@ -245,6 +246,9 @@ exports.user_get_search = asyncHandler(async (req, res) => {
         username: {
           contains: search,
           mode: "insensitive",
+        },
+        id: {
+          not: userId,
         },
       },
       select: {
