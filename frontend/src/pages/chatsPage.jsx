@@ -16,12 +16,38 @@ export default function ChatsPage() {
     const [conversationId, setConversationId] = useState(null);
     const [displayChatRightSide, setDisplayChatRightSide] = useState(false);
     const [participants, setParticipants] = useState([]);
-    const [colors, setColors] = useState([]);
-    const [convUsers, setConvUsers] = useState([]);
+    const [search, setSearch] = useState('');;
+    const [searchResults, setSearchResults] = useState([]);
 
     let [messageText, setMessageText] = useState("");
 
+    const handleInputChange = (e) => {
+        setSearch(e.target.value);
+        searchUsers(e.target.value);
+    };
 
+    const searchUsers = async() => {
+        if(search.trim === "") {
+            setSearchResults([]);
+            return
+        }
+        
+        try {
+            const response = await fetch(`http://localhost:3000/users/search?search=${search}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type" : "application/json",
+                },
+                credentials: "include",
+            });
+
+            const users = await response.json();
+            setSearchResults(users);
+            console.log(users)
+        } catch(error) {
+            console.log(error)
+        }
+    }
     // get all contacts
     useEffect(() => {
         const getAllContacts = async () => {
@@ -32,6 +58,7 @@ export default function ChatsPage() {
                 const data = await response.json();""
                 console.log("getAllContacts:", data);
                 setContacts(data);
+                setSearchResults(data);
             } catch (error) {
                 console.error("Error getting contacts:", error);
             }
@@ -58,7 +85,7 @@ export default function ChatsPage() {
             }
             const contactDetailsData = await contactDetailsResponse.json();
             
-            console.log("!!!!!!!!!!!!!!!!!!!!contactDetailsData!!!!!!!!!!!!!!!!!!!!",  contactDetailsData)
+            console.log(contactDetailsData)
             setContactId(contactDetailsData.user.id);
             console.log(contactDetailsData.user.profile);
             setContactUsername(contactDetailsData.user.username)
@@ -136,15 +163,25 @@ export default function ChatsPage() {
                         <header className="text-2xl font-medium py-2">Chats</header>
                         <div>
                             <img src={searchIcon} className="pt-3 pl-1 pr-1  w-[30px] absolute" />
-                            <input type="search" name="search" className="mb-4 pl-8 mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 
+                            <input type="search" name="search" value={search} onChange={handleInputChange} onKeyUp={searchUsers} className="mb-4 pl-8 mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 
                             placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1" placeholder="Search Messenger" />
                         </div>
                         <div className="overflow-auto ">
                             <ul>
-                                {
-                                    contacts.map
-                                    (
-                                        (contact) =>
+                                {search.length > 0 ? (
+                                    searchResults.length > 0 ? (
+                                    searchResults.map((user) => (
+                                        <li key={user.id} className="cursor-pointer m-2 flex gap-1 items-center">
+                                            <img src={user.profile} alt={user.username} />
+                                            {user.username}
+                                        </li>
+                                    ))
+                                    ) : (
+                                        <p>No users found</p>
+                                    )
+
+                                    ) : contacts.length > 0 ? (
+                                        contacts.map((contact) => (
                                             <li key={contact.id} className="cursor-pointer m-2 flex gap-1 items-center" onClick=
                                             {
                                                 async(e) => {
@@ -169,11 +206,15 @@ export default function ChatsPage() {
                                                     } catch (error) {
                                                         console.log("getContactDetails in contacts map failed")
                                                     }
-                                            }}>
+                                            }}
+                                            >
                                                 <img src={contact.profile}/>
-                                                {contact.username}</li>
-                                    )
-                                }
+                                                {contact.username}
+                                            </li>
+                                        ))
+                                    ) : (
+                                        <p>No contacts found</p>
+                                    )}
                             </ul>
                         </div>
                 </div>
