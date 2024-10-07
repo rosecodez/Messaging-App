@@ -27,7 +27,7 @@ export default function ChatsPage() {
     };
 
     const searchUsers = async() => {
-        if(search.trim === "") {
+        if (search.trim() === "") {
             setSearchResults([]);
             return
         }
@@ -58,6 +58,8 @@ export default function ChatsPage() {
                 const data = await response.json();""
                 console.log("getAllContacts:", data);
                 setContacts(data);
+                
+                // initially display all contacts
                 setSearchResults(data);
             } catch (error) {
                 console.error("Error getting contacts:", error);
@@ -144,10 +146,10 @@ export default function ChatsPage() {
             }
 
             const conversation = await response.json();
-
+            setParticipants(conversation.participants)
             setConversationId(conversation.id);
             setMessages(conversation.messages);
-            
+            console.log(conversation.messages)
             return conversation
             
         } catch(error) {
@@ -163,7 +165,7 @@ export default function ChatsPage() {
                         <header className="text-2xl font-medium py-2">Chats</header>
                         <div>
                             <img src={searchIcon} className="pt-3 pl-1 pr-1  w-[30px] absolute" />
-                            <input type="search" name="search" value={search} onChange={handleInputChange} onKeyUp={searchUsers} className="mb-4 pl-8 mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 
+                            <input type="search" name="search" value={search} onChange={handleInputChange} className="mb-4 pl-8 mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 
                             placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1" placeholder="Search Messenger" />
                         </div>
                         <div className="overflow-auto ">
@@ -182,14 +184,15 @@ export default function ChatsPage() {
                                                 if (previousTarget) {
                                                     previousTarget.style.fontWeight = "normal";
                                                 }
+
                                                 e.currentTarget.style.fontWeight = "bold";
                                                 setPreviousTarget(e.currentTarget);
                                                 
                                                 try {
-                                                    const conversation = await getConversation(contact.id);
+                                                    const conversation = await getConversation(user.id);
 
                                                     if(conversation.id){
-                                                        await getContactDetails(contact.id, conversation.id);
+                                                        await getContactDetails(user.id, conversation.id);
                                                     } else { "getContactDetails in contacts map failed"}
                                                     
                                                 } catch (error) {
@@ -217,6 +220,7 @@ export default function ChatsPage() {
                                                     if (previousTarget) {
                                                         previousTarget.style.fontWeight = "normal";
                                                     }
+
                                                     e.currentTarget.style.fontWeight = "bold";
                                                     setPreviousTarget(e.currentTarget);
                                                     
@@ -232,7 +236,7 @@ export default function ChatsPage() {
                                                     }
                                             }}
                                             >
-                                                <img src={contact.profile}/>
+                                                <img src={contact.profile} alt={contact.username}/>
                                                 {contact.username}
                                             </li>
                                         ))
@@ -259,7 +263,6 @@ export default function ChatsPage() {
                                 /* - map conversation messages,
                                    - display participant messages left/right with different colors
                                  
-                                   - to do: sort messages by sentAt time
                                    - to do: could compare time when message was sent with current time 
                                             to add something like "just now, 2mins ago etc." 
                                    -        refresh page when user sends a message to user2, but need to go to the same conversation again   */
@@ -275,6 +278,7 @@ export default function ChatsPage() {
 
                                 if (participants[1] && message.userId === participants[1].id) {
                                     participantColor1 = participants[1].color;
+                                    
                                     return (
                                         <div className="flex flex-col content-start text-wrap gap-1 items-center justify-end">
                                             <p className="text-[13px] self-start">{message.user.username}</p>
