@@ -223,7 +223,7 @@ exports.user_get_contact_by_id = asyncHandler(async (req, res, next) => {
       return res.status(404).json({ message: "Conversation not found" });
     }
 
-    res.json({
+    res.status(200).json({
       user: {
         id: user.id,
         username: user.username,
