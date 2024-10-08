@@ -5,6 +5,7 @@ require("dotenv").config();
 let agent = request.agent(app);
 
 const userId = process.env.USER_ID;
+const conversationId = process.env.CONVERSATION_ID;
 before((done) => {
   agent
     .post("/users/log-in")
@@ -49,6 +50,28 @@ describe("users routes", () => {
 
           expect(res.body).to.be.an("object");
           expect(res.body).to.have.property("message").that.is.a("string");
+          expect(res.body).to.have.property("user").that.is.an("object");
+
+          const user = res.body.user;
+
+          expect(user).to.have.property("id").that.is.a("string");
+          expect(user).to.have.property("username").that.is.a("string");
+          expect(user).to.have.property("profile").that.is.a("string");
+          done();
+        });
+    });
+  });
+
+  describe("GET /users/:userId/details", () => {
+    it("should return a 200 status and a JSON response with a 'contact' object by its id", (done) => {
+      agent
+        .get(`/users/${userId}/details?conversationId=${conversationId}`)
+        .expect(200)
+        .expect("Content-Type", /json/)
+        .end((err, res) => {
+          if (err) return done(err);
+
+          expect(res.body).to.be.an("object");
           expect(res.body).to.have.property("user").that.is.an("object");
 
           const user = res.body.user;
