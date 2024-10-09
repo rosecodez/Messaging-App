@@ -14,7 +14,7 @@ router.post("/log-in", userController.user_login_post);
 //log-out
 router.get("/log-out", userController.user_logout_get);
 
-// profile
+// profile, tested
 router.get("/profile", userController.user_profile_get);
 
 // update profile picture
@@ -24,13 +24,13 @@ router.post(
   userController.user_update_profile_picture
 );
 
-// get all contacts
+// get all contacts, tested
 router.get("/get-all-contacts", userController.user_get_all_contacts);
 
-// get contact by id
+// get contact by id, tested
 router.get("/:userId/details", userController.user_get_contact_by_id);
 
-// search user
+// search user, tested
 router.get("/search", userController.user_get_search);
 
 module.exports = router;
