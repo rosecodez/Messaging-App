@@ -17,7 +17,7 @@ router.get("/log-out", userController.user_logout_get);
 // profile, tested
 router.get("/profile", userController.user_profile_get);
 
-// update profile picture
+// update profile picture, tested
 router.post(
   "/update-profile-picture",
   upload.single("file"),

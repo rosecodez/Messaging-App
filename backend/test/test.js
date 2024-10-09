@@ -1,11 +1,13 @@
 const request = require("supertest");
 const app = require("../app.js");
 const { expect } = require("chai");
+const path = require("path");
 require("dotenv").config();
 let agent = request.agent(app);
 
 const userId = process.env.USER_ID;
 const conversationId = process.env.CONVERSATION_ID;
+const testImage = path.join(__dirname, "assets", "test_image.jpeg");
 
 // before tests, log in user
 before((done) => {
@@ -109,6 +111,26 @@ describe("users routes", () => {
             expect(user).to.not.have.property("email");
             expect(user).to.not.have.property("createdAt");
           });
+
+          done();
+        });
+    });
+  });
+
+  // update profile picture
+  describe("POST /users/update-profile-picture", (done) => {
+    it("should return a 200 status and a JSON response with a 'updatedUser object", (done) => {
+      agent
+        .post(`/users/update-profile-picture`)
+        .expect(200)
+        .attach("file", testImage)
+        .expect("Content-Type", /json/)
+
+        .end((err, res) => {
+          if (err) return done(err);
+          expect(res.body).to.be.an("object");
+          expect(res.body).to.have.property("message").that.is.a("string");
+          expect(res.body).to.have.property("profileImage").that.is.a("string");
 
           done();
         });
