@@ -7,17 +7,17 @@ const upload = require("../middleware/multer");
 router.get("/sign-up", userController.user_signup_get);
 router.post("/sign-up", userController.user_signup_post);
 
-//log-in form
+//log-in form, tested
 router.get("/log-in", userController.user_login_get);
 router.post("/log-in", userController.user_login_post);
 
-//log-out
-router.get("/log-out", userController.user_logout_get);
+//log-out, tested
+router.post("/log-out", userController.user_logout_post);
 
 // profile, tested
 router.get("/profile", userController.user_profile_get);
 
-// update profile picture, tested
+// update profile picture,
 router.post(
   "/update-profile-picture",
   upload.single("file"),

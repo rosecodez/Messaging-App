@@ -10,6 +10,8 @@ const conversationId = process.env.CONVERSATION_ID;
 const testImage = path.join(__dirname, "assets", "test_image.jpeg");
 
 // before tests, log in user
+
+//login
 before((done) => {
   agent
     .post("/users/log-in")
@@ -136,4 +138,32 @@ describe("users routes", () => {
         });
     });
   });
+});
+
+//logout
+after((done) => {
+  agent
+    .post("/users/log-out")
+    .expect(200)
+    .expect("Content-Type", /json/)
+    .end((err, res) => {
+      if (err) return done(err);
+
+      expect(res.body)
+        .to.have.property("message")
+        .that.equals("Logged out successfully");
+
+      // check if session is destroyed by accessing a protected route from the outside
+      agent
+        .get("/users/profile")
+        .expect(401)
+        .end((err2, res2) => {
+          if (err2) return done(err2);
+
+          expect(res2.body)
+            .to.have.property("message")
+            .that.equals("Unauthorized, please log in.");
+          done();
+        });
+    });
 });
