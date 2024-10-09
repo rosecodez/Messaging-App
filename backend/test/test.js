@@ -6,6 +6,7 @@ let agent = request.agent(app);
 
 const userId = process.env.USER_ID;
 const conversationId = process.env.CONVERSATION_ID;
+
 before((done) => {
   agent
     .post("/users/log-in")
@@ -79,6 +80,29 @@ describe("users routes", () => {
           expect(user).to.have.property("id").that.is.a("string");
           expect(user).to.have.property("username").that.is.a("string");
           expect(user).to.have.property("profile").that.is.a("string");
+          done();
+        });
+    });
+  });
+
+  describe("GET /users/search", () => {
+    const search = "test";
+    it("should return a 200 status and a JSON response with a 'users' array", (done) => {
+      agent
+        .get(`/users/search?search=${search}`)
+        .expect(200)
+        .expect("Content-Type", /json/)
+        .end((err, res) => {
+          if (err) return done(err);
+
+          expect(res.body).to.be.an("array");
+
+          res.body.forEach((user) => {
+            expect(user).to.have.property("id").that.is.a("string");
+            expect(user).to.have.property("username").that.is.a("string");
+            expect(user).to.have.property("profile").that.is.a("string");
+          });
+
           done();
         });
     });

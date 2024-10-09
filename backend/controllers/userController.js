@@ -257,7 +257,7 @@ exports.user_get_search = asyncHandler(async (req, res) => {
         profile: true,
       },
     });
-
+    console.log(users);
     res.json(users);
   } catch (error) {
     console.error(error);
