@@ -9,6 +9,8 @@ const userId = process.env.USER_ID;
 const conversationId = process.env.CONVERSATION_ID;
 const testImage = path.join(__dirname, "assets", "test_image.jpeg");
 
+// so far I have only tested 200 responses, I could also test the 400, 500s responses as well,
+// if i am missing data that the request needs
 // before tests, log in user
 
 //login
@@ -133,6 +135,35 @@ describe("users routes", () => {
           expect(res.body).to.be.an("object");
           expect(res.body).to.have.property("message").that.is.a("string");
           expect(res.body).to.have.property("profileImage").that.is.a("string");
+
+          done();
+        });
+    });
+  });
+});
+
+describe("messages routes", () => {
+  const textMessage = "hello!";
+  describe("POST /messages/new-message", () => {
+    it("should return a 201 status and a json response with a new message", (done) => {
+      agent
+        .post("/messages/new-message")
+        .send({ text: textMessage, conversationId: conversationId })
+        .set("Content-Type", "application/json")
+        .expect(201)
+
+        .end((err, res) => {
+          if (err) return done(err);
+          expect(res.body).to.have.property("text").that.equals("hello!");
+          expect(res.body)
+            .to.have.property("conversationId")
+            .that.equals(conversationId);
+          expect(res.body).to.have.property("userId").that.is.a("string");
+          expect(res.body).to.have.property("conversation").that.an("object");
+          expect(res.body).to.have.property("user").that.is.an("object");
+          expect(res.body.user)
+            .to.have.property("username")
+            .that.is.a("string");
 
           done();
         });
