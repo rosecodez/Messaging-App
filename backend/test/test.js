@@ -6,6 +6,7 @@ require("dotenv").config();
 let agent = request.agent(app);
 
 const userId = process.env.USER_ID;
+const otherUserId = process.env.OTHER_USER_ID;
 const conversationId = process.env.CONVERSATION_ID;
 const testImage = path.join(__dirname, "assets", "test_image.jpeg");
 
@@ -144,6 +145,7 @@ describe("users routes", () => {
 
 describe("messages routes", () => {
   const textMessage = "hello!";
+  // new message
   describe("POST /messages/new-message", () => {
     it("should return a 201 status and a json response with a new message", (done) => {
       agent
@@ -164,6 +166,28 @@ describe("messages routes", () => {
           expect(res.body.user)
             .to.have.property("username")
             .that.is.a("string");
+
+          done();
+        });
+    });
+  });
+
+  describe("POST /messages/conversation", () => {
+    it("should retrieve an existing conversation if it exists", (done) => {
+      agent
+        .post("/messages/conversation")
+        .send({ userId: otherUserId })
+        .expect(201)
+        .expect("Content-Type", /json/)
+        .end((err, res) => {
+          if (err) return done(err);
+
+          expect(res.body).to.be.an("object");
+          expect(res.body).to.have.property("participants").that.is.an("array");
+          expect(res.body).to.have.property("messages").that.is.an("array");
+
+          const participantIds = res.body.participants.map((p) => p.id);
+          expect(participantIds).to.include(otherUserId);
 
           done();
         });
