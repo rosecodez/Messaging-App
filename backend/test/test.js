@@ -192,6 +192,28 @@ describe("messages routes", () => {
           done();
         });
     });
+
+    it("should create a new conversation if one does not exist", (done) => {
+      agent
+        .post("/messages/conversation")
+        .send({ userId: otherUserId })
+        .expect("Content-Type", /json/)
+
+        .end((err, res) => {
+          if (err) return done(err);
+          console.log("Server Response:", res.body);
+
+          expect(res.status).to.equal(201);
+          expect(res.body).to.be.an("object");
+          expect(res.body).to.have.property("participants").that.is.an("array");
+          expect(res.body).to.have.property("messages").that.is.an("array");
+
+          const participantIds = res.body.participants.map((p) => p.id);
+          expect(participantIds).to.include(otherUserId);
+
+          done();
+        });
+    });
   });
 });
 
